@@ -5,6 +5,11 @@
 {% block conteudo %}
     <h1>Catálogo de Livros</h1>
 
+    <form method="get" action="{{ url_for('index') }}">
+        <input type="text" name="q" placeholder="Buscar título..." value="{{ request.args.get('q','') }}">
+        <button type="submit">Buscar</button>
+    </form>
+
     <ul>
         {% for livro in livros %}
             <li>

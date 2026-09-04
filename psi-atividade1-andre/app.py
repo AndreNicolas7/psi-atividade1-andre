@@ -7,7 +7,8 @@ app.config["SECRET_KEY"] = "psi-atividade1"
 
 @app.get("/")
 def index():
-    livros = models.buscar_livros()
+    q = request.args.get("q", "")
+    livros = models.buscar_livros(q)
     return render_template("index.html", livros=livros)
 
 
@@ -20,6 +21,32 @@ def detalhe_livro(livro_id):
 
     resenhas = models.resenhas_do_livro(livro_id)
     return render_template("livro.html", livro=livro, resenhas=resenhas)
+
+
+@app.post("/livro/<int:livro_id>/resenhar")
+def resenhar(livro_id):
+    if "usuario" not in session:
+        return redirect(url_for("login"))
+
+    texto = request.form.get("texto", "").strip()
+    nota_raw = request.form.get("nota")
+    try:
+        nota = int(nota_raw)
+    except Exception:
+        nota = None
+
+    novo_id = models.proximo_id_resenha
+    nova_resenha = {
+        "id": novo_id,
+        "livro_id": livro_id,
+        "usuario": session.get("usuario"),
+        "texto": texto,
+        "nota": nota,
+    }
+    models.resenhas.append(nova_resenha)
+    models.proximo_id_resenha += 1
+
+    return redirect(url_for("detalhe_livro", livro_id=livro_id))
 
 
 @app.route("/login", methods=["GET", "POST"])
