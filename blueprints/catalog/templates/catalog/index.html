@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block titulo %}Catálogo{% endblock %}
+
+{% block conteudo %}
+    <h2>Catálogo de Livros</h2>
+
+    <form method="get">
+        <label for="q">Buscar por título</label>
+        <input type="text" name="q" id="q" value="{{ q }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% for livro in livros %}
+        <div class="card">
+            <h3>{{ livro.titulo }}</h3>
+            <p>{{ livro.autor }} · {{ livro.ano }}</p>
+            <a href="{{ url_for('catalog.ver_livro', livro_id=livro.id) }}">Ver detalhes</a>
+        </div>
+    {% endfor %}
+{% endblock %}
